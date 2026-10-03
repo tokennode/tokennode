@@ -1,0 +1,521 @@
+# TokenNode 第三方组件声明（THIRD-PARTY NOTICES）
+
+> 本文件列明 TokenNode 发布产物中包含的第三方组件、其版权归属与许可条款。
+> 这些组件依其**自身许可**分发，不受 TokenNode 软件许可协议（`LICENSE`）中
+> 再分发限制的约束（见 `LICENSE` 第五节「第三方组件」）。
+>
+> 维护约定：新增捆绑的第三方二进制或 Go 依赖时，在本文件登记并附许可全文；
+> 本文件随每个发布产物一同分发。
+
+---
+
+## 一、捆绑的第三方可执行文件与库
+
+以下组件以独立文件形式随 relay 产物（Linux tar.gz / Windows zip / 桌面 NSIS）分发。
+它们以**独立进程**（easytier-core）或**运行时动态加载的库**（wintun.dll / Packet.dll /
+WinDivert64.sys）形式使用，不与 TokenNode 代码静态链接。
+
+### 1.1 EasyTier（`easytier-core`）
+
+| 项目 | 内容 |
+|---|---|
+| 用途 | 虚拟组网数据面（relay spawn 的独立子进程） |
+| 捆绑版本 | 2.6.4-8428a89d |
+| 来源 | https://github.com/EasyTier/EasyTier |
+| 版权 | Copyright (C) EasyTier 项目贡献者 |
+| 许可 | **GNU Lesser General Public License v3.0 (LGPL-3.0)** |
+
+使用形式：relay 通过 `spawn` 调用 `easytier-core` 子进程并经本机参数通信，属
+LGPL-3.0 意义上的「使用库的接口」而非「基于库的衍生作品」。依 LGPL-3.0 要求，
+本文件附许可全文（见第五节），并告知组件的完整源码获取地址（上述来源）。
+用户可自行以兼容版本的 `easytier-core` 替换产物中同名文件。
+
+### 1.2 wintun（`wintun.dll`）
+
+| 项目 | 内容 |
+|---|---|
+| 用途 | Windows TUN 虚拟网卡驱动（运行时由 easytier-core 动态加载） |
+| 来源 | https://www.wintun.net/ （源码：https://git.zx2c4.com/wintun/） |
+| 版权 | Copyright (C) 2018-2021 WireGuard LLC. All Rights Reserved. |
+| 许可 | **Wintun Prebuilt Binaries License**（专有许可，非开源） |
+
+**重要说明**：`wintun.dll` **源码**为 GPLv2，但其**预编译二进制**单独以
+「Prebuilt Binaries License」发布。该许可第 3(d) 条明确允许在以下条件下随其他软件分发：
+
+> d. resell, redistribute, lease, rent, transfer, sublicense, or otherwise
+>    transfer rights of the Software without the prior written consent of
+>    WireGuard LLC, **except insofar as the Software is distributed alongside
+>    other software that uses the Software only via the Permitted API**;
+
+TokenNode 通过 `wintun.h` 声明的 API（Permitted API）动态加载 `wintun.dll`，未修改、
+未反向工程该库，符合上述例外条件。许可全文见第五节。
+
+### 1.3 WinDivert（`Packet.dll` / `WinDivert64.sys`）
+
+| 项目 | 内容 |
+|---|---|
+| 用途 | Windows 网络包捕获/重定向驱动（供 easytier-core 使用） |
+| 来源 | https://github.com/basil00/WinDivert （https://reqrypt.org/windivert.html） |
+| 版权 | Copyright (C) Basil (reqrypt.org) 与贡献者 |
+| 许可 | **双许可：LGPL-3.0 或 GPL-2.0（使用者择一）** |
+
+TokenNode 依 **LGPL-3.0** 分发（本文件附 LGPL-3.0 全文，见第五节）。这两个文件由
+`easytier-core` 在运行时加载，TokenNode 代码不与之链接。用户可自行替换产物中同名文件。
+
+---
+
+## 二、编译进 Go 二进制的第三方模块
+
+以下 Go 模块被编译进 relay / center 二进制（均为**宽松许可**，无 copyleft）。
+依各许可要求，此处复现版权与许可声明。
+
+| 模块 | 版本 | 许可 |
+|---|---|---|
+| github.com/andybalholm/brotli | v1.0.6 | MIT |
+| github.com/cloudflare/circl | v1.3.7 | BSD-3-Clause |
+| github.com/dustin/go-humanize | v1.0.1 | MIT |
+| github.com/google/uuid | v1.6.0 | BSD-3-Clause |
+| github.com/klauspost/compress | v1.17.4 | BSD-3-Clause |
+| github.com/mattn/go-isatty | v0.0.24 | MIT |
+| github.com/ncruces/go-strftime | v1.0.0 | MIT |
+| github.com/refraction-networking/utls | v1.6.7 | BSD-3-Clause |
+| github.com/remyoudompheng/bigfft | v0.0.0-20230129092748-24d4a6f8daec | BSD-3-Clause |
+| golang.org/x/crypto | v0.55.0 | BSD-3-Clause |
+| golang.org/x/net | v0.58.0 | BSD-3-Clause |
+| golang.org/x/sys | v0.47.0 | BSD-3-Clause |
+| golang.org/x/text | v0.41.0 | BSD-3-Clause |
+| modernc.org/libc | v1.74.4 | BSD-3-Clause |
+| modernc.org/mathutil | v1.7.1 | BSD-3-Clause |
+| modernc.org/memory | v1.11.0 | BSD-3-Clause |
+| modernc.org/sqlite | v1.56.0 | BSD-3-Clause |
+
+（间接依赖一并列出；完整依赖图见 `go.mod` / `go.sum`。）
+
+### 2.1 MIT 许可全文（适用于上表中标注 MIT 的模块）
+
+```
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### 2.2 BSD-3-Clause 许可全文（适用于上表中标注 BSD-3-Clause 的模块）
+
+```
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
+---
+
+## 三、已捆绑（CLIProxyAPI，ADR-0035 决策 3）
+
+### 3.1 CLIProxyAPI（`cli-proxy-api[.exe]`）
+
+| 项目 | 内容 |
+|---|---|
+| 用途 | B 侧执行层（sidecar 独立进程，承载 claude / codex / antigravity 的 OAuth 调用与凭据刷新） |
+| 来源 | https://github.com/router-for-me/CLIProxyAPI |
+| 捆绑版本 | v7.3.4（初始 pin，见 `docs/deploys/cpa-sidecar.md` §平台矩阵；后续跟随策略属 ADR-0035 待定 2） |
+| 版权 | Copyright (c) 2025-2005.9 Luis Pater；Copyright (c) 2025.9-present Router-For.ME（上游 `LICENSE` 前五行**原文照录**，其中「2025-2005.9」的年份区间系上游原始写法，非转抄错误） |
+| 许可 | **MIT** |
+
+使用形式：**独立进程**——`cpa.enabled=true` 时由 relay 托管（同目录定位 → spawn → 健康探活 →
+退避守护），不与 TokenNode 代码静态链接，也不嵌入本仓库的 Go 二进制。
+
+分发要求（MIT 的满足方式）：随产物保留版权声明与许可全文，故：
+
+- 许可全文随产物以 `CLIPROXYAPI-LICENSE.txt` 分发（本文件亦附全文，见第五节之后的 3.1 全文附录）；
+- 源码获取地址即上表「来源」。
+
+平台矩阵：Linux（VPS 裸二进制）与 Windows（桌面 NSIS / dsh 插件包）三通道随产物捆绑；
+**Android 通道按 ADR-0035 待定 6 方案 A（推迟）不捆绑**——Android 无 `/etc/resolv.conf` 且
+relay 的进程内解析器（`TN_RESOLVER`）不传导给第三方子进程，内核在该环境无法解析上游域名；
+收益（该通道现为免费模型分享形态、不供给三个 OAuth provider）不成立。详见
+`docs/deploys/cpa-sidecar.md`。
+
+### 3.2 CLIProxyAPI 许可全文
+
+```
+MIT License
+
+Copyright (c) 2025-2005.9 Luis Pater
+Copyright (c) 2025.9-present Router-For.ME
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## 四、未捆绑的关联项目
+
+以下项目与本软件配合使用但**不包含**在本产物内，仅为来源标注：
+
+- **dsh-relay**（`@dsh-external/dsh-relay`）：经 npm 独立分发，不随本仓库产物发布（ADR-0015 决策 1）。
+
+---
+
+## 四之二、算法与协议的参考实现（源码级移植来源，ADR 见任务 10-01-workbuddy2api-full-parity）
+
+TokenNode 的 WorkBuddy 多账号能力（OAuth 双区池、请求/流协议适配、模型能力探测、积分与成长
+动作编排、排程与额度策略）是对下列 **MIT** 许可项目的**源码级参考与移植**结果。移植只取协议细节
+与算法口径，不复制其服务形态（端口、面板静态文件、独立 Docker 壳、API Key 网关均由 TokenNode
+既有能力承接），并保留原版权与许可声明。
+
+| 项目 | 内容 |
+|---|---|
+| 用途 | WorkBuddy（CN/global 双区）协议与池策略的参考实现 |
+| 来源 | https://github.com/linguo2625469/workbuddy2api-panel （上游：https://github.com/Sliverkiss/workbuddy2api ） |
+| 锁定提交 | `8584e4554cf5b7f36fb2537044b8d149fd3f8d77`（2026-09-30） |
+| 版权 | Copyright (c) 2026 Sliverkiss（原项目）；Copyright (c) 2026 linguo2625469（本 fork） |
+| 许可 | **MIT License**（全文见 4.2.1） |
+
+### 4.2.1 MIT 许可全文（WorkBuddy 参考实现）
+
+```
+MIT License
+
+Copyright (c) 2026 Sliverkiss (original project: https://github.com/Sliverkiss/workbuddy2api)
+Copyright (c) 2026 linguo2625469 (this fork: https://github.com/linguo2625469/workbuddy2api-panel)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## 五、GNU 许可全文
+
+### 5.1 GNU Lesser General Public License v3.0（LGPL-3.0）
+
+适用于：EasyTier（`easytier-core`）、WinDivert（`Packet.dll` / `WinDivert64.sys`）。
+
+```
+                   GNU LESSER GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+
+  This version of the GNU Lesser General Public License incorporates
+the terms and conditions of version 3 of the GNU General Public
+License, supplemented by the additional permissions listed below.
+
+  0. Additional Definitions.
+
+  As used herein, "this License" refers to version 3 of the GNU Lesser
+General Public License, and the "GNU GPL" refers to version 3 of the GNU
+General Public License.
+
+  "The Library" refers to a covered work governed by this License,
+other than an Application or a Combined Work as defined below.
+
+  An "Application" is any work that makes use of an interface provided
+by the Library, but which is not otherwise based on the Library.
+Defining a subclass of a class defined by the Library is deemed a mode
+of using an interface provided by the Library.
+
+  A "Combined Work" is a work produced by combining or linking an
+Application with the Library.  The particular version of the Library
+with which the Combined Work was made is also called the "Linked
+Version".
+
+  The "Minimal Corresponding Source" for a Combined Work means the
+Corresponding Source for the Combined Work, excluding any source code
+for portions of the Combined Work that, considered in isolation, are
+based on the Application, and not on the Linked Version.
+
+  The "Corresponding Application Code" for a Combined Work means the
+object code and/or source code for the Application, including any data
+and utility programs needed for reproducing the Combined Work from the
+Application, but excluding the System Libraries of the Combined Work.
+
+  1. Exception to Section 3 of the GNU GPL.
+
+  You may convey a covered work under sections 3 and 4 of this License
+without being bound by section 3 of the GNU GPL.
+
+  2. Conveying Modified Versions.
+
+  If you modify a copy of the Library, and, in your modifications, a
+facility refers to a function or data to be supplied by an Application
+that uses the facility (other than as an argument passed when the
+facility is invoked), then you may convey a copy of the modified
+version:
+
+   a) under this License, provided that you make a good faith effort to
+   ensure that, in the event an Application does not supply the
+   function or data, the facility still operates, and performs
+   whatever part of its purpose remains meaningful, or
+
+   b) under the GNU GPL, with none of the additional permissions of
+   this License applicable to that copy.
+
+  3. Object Code Incorporating Material from Library Header Files.
+
+  The object code form of an Application may incorporate material from
+a header file that is part of the Library.  You may convey such object
+code under terms of your choice, provided that, if the incorporated
+material is not limited to numerical parameters, data structure
+layouts and accessors, or small macros, inline functions and templates
+(ten or fewer lines in length), you do both of the following:
+
+   a) Give prominent notice with each copy of the object code that the
+   Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the object code with a copy of the GNU GPL and this license
+   document.
+
+  4. Combined Works.
+
+  You may convey a Combined Work under terms of your choice that,
+taken together, effectively do not restrict modification of the
+portions of the Library contained in the Combined Work and reverse
+engineering for debugging such modifications, if you also do each of
+the following:
+
+   a) Give prominent notice with each copy of the Combined Work that
+   the Library is used in it and that the Library and its use are
+   covered by this License.
+
+   b) Accompany the Combined Work with a copy of the GNU GPL and this license
+   document.
+
+   c) For a Combined Work that displays copyright notices during
+   execution, include the copyright notice for the Library among
+   these notices, as well as a reference directing the user to the
+   copies of the GNU GPL and this license document.
+
+   d) Do one of the following:
+
+       0) Convey the Minimal Corresponding Source under the terms of this
+       License, and the Corresponding Application Code in a form
+       suitable for, and under terms that permit, the user to
+       recombine or relink the Application with a modified version of
+       the Linked Version to produce a modified Combined Work, in the
+       manner specified by section 6 of the GNU GPL for conveying
+       Corresponding Source.
+
+       1) Use a suitable shared library mechanism for linking with the
+       Library.  A suitable mechanism is one that (a) uses at run time
+       a copy of the Library already present on the user's computer
+       system, and (b) will operate properly with a modified version
+       of the Library that is interface-compatible with the Linked
+       Version.
+
+   e) Provide Installation Information, but only if you would otherwise
+   be required to provide such information under section 6 of the
+   GNU GPL, and only to the extent that such information is
+   necessary to install and execute a modified version of the
+   Combined Work produced by recombining or relinking the
+   Application with a modified version of the Linked Version. (If
+   you use option 4d0, the Installation Information must accompany
+   the Minimal Corresponding Source and Corresponding Application
+   Code. If you use option 4d1, you must provide the Installation
+   Information in the manner specified by section 6 of the GNU GPL
+   for conveying Corresponding Source.)
+
+  5. Combined Libraries.
+
+  You may place library facilities that are a work based on the
+Library side by side in a single library together with other library
+facilities that are not Applications and are not covered by this
+License, and convey such a combined library under terms of your
+choice, if you do both of the following:
+
+   a) Accompany the combined library with a copy of the same work based
+   on the Library, uncombined with any other library facilities,
+   conveyed under the terms of this License.
+
+   b) Give prominent notice with the combined library that part of it
+   is a work based on the Library, and explaining where to find the
+   accompanying uncombined form of the same work.
+
+  6. Revised Versions of the GNU Lesser General Public License.
+
+  The Free Software Foundation may publish revised and/or new versions
+of the GNU Lesser General Public License from time to time. Such new
+versions will be similar in spirit to the present version, but may
+differ in detail to address new problems or concerns.
+
+  Each version is given a distinguishing version number. If the
+Library as you received it specifies that a certain numbered version
+of the GNU Lesser General Public License "or any later version"
+applies to it, you have the option of following the terms and
+conditions either of that published version or of any later version
+published by the Free Software Foundation. If the Library as you
+received it does not specify a version number of the GNU Lesser
+General Public License, you may choose any version of the GNU Lesser
+General Public License ever published by the Free Software Foundation.
+
+  If the Library as you received it specifies that a proxy can decide
+whether future versions of the GNU Lesser General Public License shall
+apply, that proxy's public statement of acceptance of any version is
+permanent authorization for you to choose that version for the
+Library.
+```
+
+> LGPL-3.0 全文以 GNU 官方发布文本为准：https://www.gnu.org/licenses/lgpl-3.0.txt
+> LGPL-3.0 是对 GNU GPLv3 的补充，完整条款需一并参阅 GPLv3：
+> https://www.gnu.org/licenses/gpl-3.0.txt
+
+### 5.2 Wintun Prebuilt Binaries License
+
+适用于：`wintun.dll`。
+
+```
+Prebuilt Binaries License
+-------------------------
+
+1. DEFINITIONS. "Software" means the precise contents of the "wintun.dll"
+   files that are included in the .zip file that contains this document as
+   downloaded from wintun.net/builds.
+
+2. LICENSE GRANT. WireGuard LLC grants to you a non-exclusive and
+   non-transferable right to use Software for lawful purposes under certain
+   obligations and limited rights as set forth in this agreement.
+
+3. RESTRICTIONS. Software is owned and copyrighted by WireGuard LLC. It is
+   licensed, not sold. Title to Software and all associated intellectual
+   property rights are retained by WireGuard. You must not:
+   a. reverse engineer, decompile, disassemble, extract from, or otherwise
+      modify the Software;
+   b. modify or create derivative work based upon Software in whole or in
+      parts, except insofar as only the API interfaces of the "wintun.h" file
+      distributed alongside the Software (the "Permitted API") are used;
+   c. remove any proprietary notices, labels, or copyrights from the Software;
+   d. resell, redistribute, lease, rent, transfer, sublicense, or otherwise
+      transfer rights of the Software without the prior written consent of
+      WireGuard LLC, except insofar as the Software is distributed alongside
+      other software that uses the Software only via the Permitted API;
+   e. use the name of WireGuard LLC, the WireGuard project, the Wintun
+      project, or the names of its contributors to endorse or promote products
+      derived from the Software without specific prior written consent.
+
+4. LIMITED WARRANTY. THE SOFTWARE IS PROVIDED "AS IS" AND WITHOUT WARRANTY OF
+   ANY KIND. WIREGUARD LLC HEREBY EXCLUDES AND DISCLAIMS ALL IMPLIED OR
+   STATUTORY WARRANTIES, INCLUDING ANY WARRANTIES OF MERCHANTABILITY, FITNESS
+   FOR A PARTICULAR PURPOSE, QUALITY, NON-INFRINGEMENT, TITLE, RESULTS,
+   EFFORTS, OR QUIET ENJOYMENT. THERE IS NO WARRANTY THAT THE PRODUCT WILL BE
+   ERROR-FREE OR WILL FUNCTION WITHOUT INTERRUPTION. YOU ASSUME THE ENTIRE
+   RISK FOR THE RESULTS OBTAINED USING THE PRODUCT. TO THE EXTENT THAT
+   WIREGUARD LLC MAY NOT DISCLAIM ANY WARRANTY AS A MATTER OF APPLICABLE LAW,
+   THE SCOPE AND DURATION OF SUCH WARRANTY WILL BE THE MINIMUM PERMITTED UNDER
+   SUCH LAW. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+   WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR
+   A PARTICULAR PURPOSE OR NON-INFRINGEMENT ARE DISCLAIMED, EXCEPT TO THE
+   EXTENT THAT THESE DISCLAIMERS ARE HELD TO BE LEGALLY INVALID.
+
+5. LIMITATION OF LIABILITY. To the extent not prohibited by law, in no event
+   WireGuard LLC or any third-party-developer will be liable for any lost
+   revenue, profit or data or for special, indirect, consequential, incidental
+   or punitive damages, however caused regardless of the theory of liability,
+   arising out of or related to the use of or inability to use Software, even
+   if WireGuard LLC has been advised of the possibility of such damages.
+   Solely you are responsible for determining the appropriateness of using
+   Software and accept full responsibility for all risks associated with its
+   exercise of rights under this agreement, including but not limited to the
+   risks and costs of program errors, compliance with applicable laws, damage
+   to or loss of data, programs or equipment, and unavailability or
+   interruption of operations. The foregoing limitations will apply even if
+   the above stated warranty fails of its essential purpose. You acknowledge,
+   that it is in the nature of software that software is complex and not
+   completely free of errors. In no event shall WireGuard LLC or any
+   third-party-developer be liable to you under any theory for any damages
+   suffered by you or any user of Software or for any special, incidental,
+   indirect, consequential or similar damages (including without limitation
+   damages for loss of business profits, business interruption, loss of
+   business information or any other pecuniary loss) arising out of the use or
+   inability to use Software, even if WireGuard LLC has been advised of the
+   possibility of such damages and regardless of the legal or quitable theory
+   (contract, tort, or otherwise) upon which the claim is based.
+
+6. TERMINATION. This agreement is affected until terminated. You may
+   terminate this agreement at any time. This agreement will terminate
+   immediately without notice from WireGuard LLC if you fail to comply with
+   the terms and conditions of this agreement. Upon termination, you must
+   delete Software and all copies of Software and cease all forms of
+   distribution of Software.
+
+7. SEVERABILITY. If any provision of this agreement is held to be
+   unenforceable, this agreement will remain in effect with the provision
+   omitted, unless omission would frustrate the intent of the parties, in
+   which case this agreement will immediately terminate.
+
+8. RESERVATION OF RIGHTS. All rights not expressly granted in this agreement
+   are reserved by WireGuard LLC. For example, WireGuard LLC reserves the
+   right at any time to cease development of Software, to alter distribution
+   details, features, specifications, capabilities, functions, licensing
+   terms, release dates, APIs, ABIs, general availability, or other
+   characteristics of the Software.
+```
