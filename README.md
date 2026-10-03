@@ -74,3 +74,5 @@ npm install -g @dsh-external/dsh-relay@latest
 ## 许可
 
 安装包按 [LICENSE](./LICENSE)（专有许可）提供：可免费安装使用，禁止再分发与逆向工程。转发请直接分享本仓库链接。
+
+产物内含第三方开源组件（组网组件 EasyTier / wintun / WinDivert、B 侧执行层内核 CLIProxyAPI（`cli-proxy-api`，MIT，sidecar 独立进程）及各 Go 依赖），这些组件依其**自身许可**分发，不受上述再分发限制约束；组件清单、版权与许可全文见 [THIRD-PARTY-NOTICES.txt](./THIRD-PARTY-NOTICES.txt)（也随每个产物一并分发）。
